@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Smart Student Assistant</title>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom right, #eef3ff, #dce7ff);
+      text-align: center;
+      margin: 0;
+      padding: 60px 20px;
+    }
+
+    h1 {
+      color: #0b2e66;
+      margin-bottom: 45px;
+      font-size: 36px;
+      font-weight: 700;
+      text-shadow: 0 3px 6px rgba(0,0,0,0.08);
+    }
+
+    .card {
+      display: inline-block;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 30px;
+      margin: 20px;
+      width: 260px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      transition: all 0.25s ease;
+      border: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 14px 30px rgba(0,0,0,0.18);
+      border-color: #b9ccff;
+    }
+
+    h2 {
+      color: #103a90;
+      font-size: 22px;
+      margin-bottom: 12px;
+    }
+
+    p {
+      color: #555;
+      font-size: 15px;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    .primary-button {
+      display: inline-block;
+      background: linear-gradient(90deg, #1a73e8, #0f5bcc);
+      color: white;
+      padding: 10px 18px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 600;
+      transition: background 0.25s ease;
+      box-shadow: 0 4px 10px rgba(26,115,232,0.4);
+    }
+
+    .primary-button:hover {
+      background: #0b4faf;
+    }
+  </style>
+</head>
+<!-- FORCE mood modal on login if askMood=1 is present in URL
+     Paste this block just before </body> in home.html -->
+<script>
+  (function(){
+    // If URL has askMood=1, show a guaranteed inline modal (no external JS required)
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('askMood') !== '1') return;
+
+    // remove query param so refresh won't re-open
+    const url = new URL(window.location.href);
+    url.searchParams.delete('askMood');
+    // also optionally remove 'success' for cleanliness
+    url.searchParams.delete('success');
+    history.replaceState(null, '', url.pathname + (url.search ? '?' + url.searchParams.toString() : ''));
+
+    // Build modal HTML (self-contained)
+    const modal = document.createElement('div');
+    modal.id = 'mood-modal-inline';
+    modal.style.position = 'fixed';
+    modal.style.left = '0';
+    modal.style.top = '0';
+    modal.style.right = '0';
+    modal.style.bottom = '0';
+    modal.style.display = 'flex';
+    modal.style.alignItems = 'center';
+    modal.style.justifyContent = 'center';
+    modal.style.background = 'rgba(2,6,23,0.45)';
+    modal.style.zIndex = 9999;
+    modal.innerHTML = `
+      <div style="background:#fff;padding:22px;border-radius:12px;max-width:520px;width:94%;text-align:center;box-shadow:0 18px 48px rgba(2,6,23,0.28)">
+        <h3 style="margin:0 0 8px;color:#123c82">How was your day?</h3>
+        <p style="color:#6b7280;margin:0 0 14px">Choose how you feel and we'll tune the theme for you.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:6px">
+          <button data-mood="happy" style="padding:10px 12px;border-radius:10px;background:#ffb74d;border:none;cursor:pointer">😊 Happy</button>
+          <button data-mood="calm" style="padding:10px 12px;border-radius:10px;background:#2fb6c9;border:none;cursor:pointer">😌 Calm</button>
+          <button data-mood="energetic" style="padding:10px 12px;border-radius:10px;background:#ff5c8a;border:none;cursor:pointer">⚡ Energetic</button>
+          <button data-mood="sad" style="padding:10px 12px;border-radius:10px;background:#6c8bd6;border:none;cursor:pointer">😔 Sad</button>
+          <button data-mood="neutral" style="padding:10px 12px;border-radius:10px;background:#9aa7c7;border:none;cursor:pointer">😐 Neutral</button>
+        </div>
+        <div style="margin-top:12px"><button id="mood-skip-inline" style="background:transparent;border:none;color:#6b7280;cursor:pointer">Skip</button></div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // helper: apply CSS theme quickly by setting data-theme attribute (your CSS must support [data-theme="..."])
+    function applyMoodInline(mood) {
+      if (!mood) mood = 'neutral';
+      document.documentElement.setAttribute('data-theme', mood);
+      document.body.setAttribute('data-theme', mood);
+    }
+
+    // helper: POST to /user/mood to persist on server (CSRF ignored here — if you have Spring Security and CSRF enabled, 
+    // the server will still accept it if CSRF tokens are configured elsewhere; this is best-effort)
+    function persistMoodInline(mood) {
+      try {
+        fetch('/user/mood', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({ mood: mood })
+        }).catch(e => console.warn('Persist mood failed', e));
+      } catch(e) { console.warn(e); }
+    }
+
+    modal.querySelectorAll('button[data-mood]').forEach(btn => {
+      btn.addEventListener('click', function(){
+        const mood = this.getAttribute('data-mood');
+        applyMoodInline(mood);
+        persistMoodInline(mood);
+        modal.remove();
+      });
+    });
+
+    document.getElementById('mood-skip-inline').addEventListener('click', function(){
+      applyMoodInline('neutral');
+      persistMoodInline('neutral');
+      modal.remove();
+    });
+
+    // small accessibility: focus first button
+    const firstBtn = modal.querySelector('button[data-mood]');
+    if (firstBtn) firstBtn.focus();
+  })();
+</script>
+
+<body>
+
+  <h1>Welcome to AI Smart Student Assistant</h1>
+  </div> <!-- end .app -->
+
+  <!-- mood/theme script (centralized) -->
+  <script th:src="@{/js/mood-theme.js}" src="/js/mood-theme.js" defer></script>
+</body>
+
+  <div class="card">
+    <h2>📄 Summary</h2>
+    <p>Upload a PDF or PPT to generate summarized notes.</p>
+    <a href="/summary" class="primary-button">Open Summary</a>
+  </div>
+
+  <div class="card">
+    <h2>🧠 Flashcards</h2>
+    <p>AI-powered flashcards for quick revision.</p>
+    <a href="/flashcards" class="primary-button">Open Flashcards</a>
+  </div>
+
+  <div class="card">
+    <h2>📝 Quiz</h2>
+    <p>Generate intelligent quizzes from your study materials.</p>
+    <a href="/quiz/upload" class="primary-button">Open Quiz</a>
+  </div>
+
+</body>
+</html>

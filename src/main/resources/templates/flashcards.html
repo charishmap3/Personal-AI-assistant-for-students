@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>Flashcards - AI Student Assistant</title>
+
+    <!-- global theme CSS -->
+    <link rel="stylesheet" th:href="@{/css/styles.css}" href="/css/styles.css"/>
+
+    <!-- small page-level styles (kept minimal) -->
+    <style>
+      .page { max-width: 1100px; margin: 28px auto; padding: 0 18px; }
+      .center { text-align:center; }
+
+      .upload-box {
+        width:100%;
+        max-width:520px;
+        margin: 18px auto;
+        padding:18px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.95));
+        border-radius:14px;
+        box-shadow: 0 10px 30px rgba(12,30,60,0.06);
+      }
+      .upload-box input[type="file"] { display:block; margin:12px auto; }
+
+      .card-container { width:100%; max-width:920px; margin: 20px auto; }
+
+      .flashcard {
+        padding: 18px;
+        border-radius: 12px;
+        border: 1px solid rgba(15,32,72,0.04);
+        margin-bottom: 14px;
+        cursor: pointer;
+        box-shadow: 0 6px 18px rgba(12,30,60,0.04);
+        transition: box-shadow 180ms ease, transform 120ms ease;
+        background: #fff;
+      }
+      .flashcard:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(12,30,60,0.06); }
+      .flashcard .question { font-weight:600; color:var(--text); margin:0 0 8px; }
+      .flashcard .answer { display:none; color:var(--muted); margin-top:8px; }
+      .flashcard.show-answer .answer { display:block; }
+
+      .file-name { text-align:center; margin-top:10px; color:var(--muted); }
+
+      /* small responsive rules */
+      @media (max-width:700px){
+        .upload-box { padding:14px; }
+        .flashcard { padding:14px; }
+      }
+    </style>
+</head>
+<body th:attr="data-theme=${session.mood != null ? session.mood : 'neutral'}">
+
+  <!-- header fragment (must be inside body) -->
+  <div th:replace="fragments/header :: header"></div>
+
+  <main class="page">
+    <h2 class="center" style="margin-top:12px">Flashcard Generator</h2>
+
+    <section class="upload-box">
+      <form method="POST" enctype="multipart/form-data" th:action="@{/flashcards/upload}">
+        <!-- If you have Spring Security CSRF enabled, uncomment the next line -->
+        <!-- <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" /> -->
+
+        <div style="text-align:center">
+          <input type="file" name="file" required />
+        </div>
+
+        <div style="text-align:center; margin-top:12px;">
+          <button class="btn" type="submit">Upload & Generate Flashcards</button>
+        </div>
+
+        <div th:if="${error != null}" style="margin-top:12px;color:#d32f2f;text-align:center;font-weight:600" th:text="${error}"></div>
+      </form>
+
+      <div th:if="${fileName != null}" class="file-name">File: <span th:text="${fileName}">uploaded-file.pdf</span></div>
+    </section>
+
+    <!-- Generated flashcards -->
+    <section class="card-container" th:if="${flashcards != null}">
+      <h3 style="margin:8px 0 18px">Generated Flashcards</h3>
+
+      <div th:each="card,iterStat : ${flashcards}" class="flashcard" th:id="${'card-' + iterStat.index}">
+        <p class="question" th:text="${card.question}">Question text</p>
+        <p class="answer" th:text="${card.answer}">Answer text</p>
+      </div>
+
+      <div style="text-align:center; margin-top:18px;">
+        <a class="btn" href="/home">Back to Home</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- mood/theme script (keeps UI consistent) -->
+  <script th:src="@{/js/mood-theme.js}" src="/js/mood-theme.js" defer></script>
+
+  <!-- page JS: toggle answers -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelectorAll('.flashcard').forEach(function (card) {
+        card.addEventListener('click', function () {
+          card.classList.toggle('show-answer');
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>

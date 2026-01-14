@@ -1,0 +1,15 @@
+com\studentassistant\service\UserService.class
+com\studentassistant\repository\UserRepository.class
+com\studentassistant\service\QuizGeneratorService.class
+com\studentassistant\JavaMiniApplication.class
+com\studentassistant\controller\QuizController.class
+com\studentassistant\controller\FileAIController.class
+com\studentassistant\model\User.class
+com\studentassistant\controller\WebController.class
+com\studentassistant\model\QuizQuestion.class
+com\studentassistant\service\FlashcardService$Flashcard.class
+com\studentassistant\controller\FlashcardController.class
+com\studentassistant\service\FlashcardService.class
+com\studentassistant\WebConfig.class
+com\studentassistant\controller\SummaryController.class
+com\studentassistant\controller\UserController.class

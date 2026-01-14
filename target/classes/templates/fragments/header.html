@@ -1,0 +1,38 @@
+<!-- fragments/header.html -->
+<div th:fragment="header">
+  <header class="app-header" role="banner"
+          style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:14px 32px;background:transparent;box-sizing:border-box">
+
+    <!-- LEFT SIDE: App Name Only (NO IMAGE) -->
+    <div style="display:flex;flex-direction:column;line-height:1.2;">
+      <div style="font-size:20px;font-weight:700;color:#14233b;">
+        AI Smart Student Assistant
+      </div>
+      <div style="font-size:13px;color:#6f7780;">
+        Smart notes · Flashcards · Quizzes
+      </div>
+    </div>
+
+    <!-- RIGHT SIDE: Nav + Mood Badge -->
+    <div style="display:flex;align-items:center;gap:22px;">
+
+      <!-- Navigation -->
+      <nav style="display:flex;align-items:center;gap:22px;font-weight:600;">
+        <a th:href="@{/home}" href="/home" style="text-decoration:none;color:#14233b;">Home</a>
+        <a th:href="@{/summary}" href="/summary" style="text-decoration:none;color:#14233b;">Summary</a>
+        <a th:href="@{/flashcards}" href="/flashcards" style="text-decoration:none;color:#14233b;">Flashcards</a>
+        <a th:href="@{/quiz/upload}" href="/quiz/upload" style="text-decoration:none;color:#14233b;">Quiz</a>
+        <a th:href="@{/logout}" href="/logout" style="text-decoration:none;color:#d64545;">Logout</a>
+      </nav>
+
+      <!-- Mood Badge -->
+      <div class="mood-badge" title="Current mood"
+           style="width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+                  background:#ffffff;box-shadow:0 4px 10px rgba(0,0,0,0.10);font-size:20px;">
+        <span class="emoji">🙂</span>
+      </div>
+
+    </div>
+
+  </header>
+</div>

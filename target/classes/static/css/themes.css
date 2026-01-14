@@ -1,0 +1,154 @@
+/* themes.css - Option C Full Mood System */
+
+/* ---------- Base variables & transitions ---------- */
+:root {
+  --bg: #f4f8ff;
+  --card-bg: #ffffff;
+  --text: #14233b;
+  --muted: #6f7780;
+  --accent: #1a73e8;
+  --card-shadow: 0 8px 24px rgba(16, 40, 80, 0.06);
+  --radius: 14px;
+  --transition-fast: 180ms cubic-bezier(.2,.9,.3,1);
+  --transition-slow: 420ms cubic-bezier(.2,.9,.3,1);
+  --glow: none;
+}
+
+/* smooth theme transitions */
+* {
+  transition: background var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* Cards and buttons */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  padding: 26px;
+  width: 300px;
+  margin: 18px;
+  display: inline-block;
+  vertical-align: top;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+.card:hover {
+  transform: translateY(-6px);
+}
+
+/* Buttons */
+.btn-primary {
+  background: linear-gradient(180deg, var(--accent), var(--accent-2, var(--accent)));
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  box-shadow: var(--glow);
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+.btn-primary:active { transform: translateY(1px); }
+
+/* Small subtext */
+.muted { color: var(--muted); font-size: 0.95rem; }
+
+/* Mood icon circle in header */
+.mood-badge {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow: 0 8px 22px rgba(12,30,60,0.08);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+}
+.mood-badge .emoji { font-size:22px; transform: translateY(0); transition: transform var(--transition-fast); }
+
+/* little bloom animation for 'happy' */
+@keyframes bloom {
+  0% { transform: scale(0.95); opacity: .7; }
+  50% { transform: scale(1.06); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* pulse for energetic */
+@keyframes energeticPulse {
+  0% { transform: scale(1); box-shadow: 0 0 0 rgba(0,0,0,0); }
+  50% { transform: scale(1.03); box-shadow: 0 10px 30px rgba(255,45,104,0.12); }
+  100% { transform: scale(1); box-shadow: 0 0 0 rgba(0,0,0,0); }
+}
+
+/* ---------- Theme overrides by data-theme attribute on body ---------- */
+
+/* HAPPY - warm, joyful */
+body[data-theme="happy"] {
+  --bg: linear-gradient(180deg,#fff7e6,#fff2df);
+  --card-bg: #fffaf0;
+  --text: #2b2b2b;
+  --muted: #6b6b6b;
+  --accent: #ffb74d;    /* top */
+  --accent-2: #ff9800;  /* bottom */
+  --card-shadow: 0 16px 36px rgba(255,152,0,0.10);
+  --glow: 0 8px 28px rgba(255,152,0,0.12);
+}
+body[data-theme="happy"] .mood-badge { background: linear-gradient(135deg,#ffd086,#ffc04a); animation: bloom .5s ease both; }
+body[data-theme="happy"] .mood-badge .emoji { transform: translateY(-1px); }
+
+/* CALM - teal, soothing */
+body[data-theme="calm"] {
+  --bg: linear-gradient(180deg,#eef8fb,#e6f3f8);
+  --card-bg: #fbffff;
+  --text: #083240;
+  --muted: #5f6b74;
+  --accent: #2fb6c9;
+  --accent-2: #2aa6b2;
+  --card-shadow: 0 16px 36px rgba(43,166,185,0.08);
+  --glow: 0 12px 40px rgba(43,166,185,0.06);
+}
+body[data-theme="calm"] .mood-badge { background: linear-gradient(135deg,#8be0e8,#4ecad6); transform: translateY(0); }
+
+/* ENERGETIC - vibrant pink */
+body[data-theme="energetic"] {
+  --bg: linear-gradient(180deg,#fff5f8,#fff0f4);
+  --card-bg: #fff9fb;
+  --text: #2a0a2f;
+  --muted: #6e3b5b;
+  --accent: #ff5c8a;
+  --accent-2: #ff2d68;
+  --card-shadow: 0 18px 44px rgba(255,45,104,0.115);
+  --glow: 0 12px 50px rgba(255,45,104,0.12);
+}
+body[data-theme="energetic"] .mood-badge { background: linear-gradient(135deg,#ff9bb8,#ff4d7a); animation: energeticPulse 900ms ease infinite; }
+
+/* SAD - cool blue */
+body[data-theme="sad"] {
+  --bg: linear-gradient(180deg,#eef3fb,#e6edf9);
+  --card-bg: #ffffff;
+  --text: #1f2e3b;
+  --muted: #8a97a6;
+  --accent: #6c8bd6;
+  --accent-2: #5773c3;
+  --card-shadow: 0 10px 30px rgba(38,72,120,0.06);
+  --glow: 0 8px 24px rgba(38,72,120,0.06);
+}
+body[data-theme="sad"] .mood-badge { background: linear-gradient(135deg,#9fb9f3,#6c8bd6); filter: saturate(.9); }
+
+/* NEUTRAL fallback */
+body[data-theme="neutral"] {
+  --bg: #f4f8ff;
+  --card-bg: #fff;
+  --text: #14233b;
+  --muted: #6f7780;
+  --accent: #1a73e8;
+  --accent-2: #155bc5;
+  --card-shadow: 0 8px 24px rgba(16, 40, 80, 0.06);
+  --glow: none;
+}

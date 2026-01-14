@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+<head>
+  <meta charset="UTF-8">
+  <title>Login | AI Student Assistant</title>
+  
+  <style>
+    
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #4e73df, #1cc88a);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: white;
+      color: #333;
+      padding: 30px;
+      border-radius: 15px;
+      width: 350px;
+      text-align: center;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    button {
+      background: #4e73df;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    button:hover {
+      background: #2e59d9;
+    }
+
+    a {
+      color: #4e73df;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    #message-box {
+      margin-top: 15px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  
+  <div class="container">
+    <h2>Login</h2>
+    <form action="/api/user/login" method="post">
+      <input type="email" name="email" placeholder="Email" required><br>
+      <input type="password" name="password" placeholder="Password" required><br>
+      <button type="submit">Login</button>
+    </form>
+    <p>Don't have an account? <a href="signup">Sign Up</a></p>
+    <div id="message-box"></div>
+  </div>
+  </div> <!-- end .app -->
+
+  <!-- mood/theme script (centralized) -->
+  <script th:src="@{/js/mood-theme.js}" src="/js/mood-theme.js" defer></script>
+</body>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const success = params.get('success');
+    const error = params.get('error');
+    const msgBox = document.getElementById('message-box');
+
+    if (success) {
+      msgBox.style.color = 'green';
+      msgBox.textContent = decodeURIComponent(success.replace(/\+/g, ' '));
+    } else if (error) {
+      msgBox.style.color = 'red';
+      msgBox.textContent = decodeURIComponent(error.replace(/\+/g, ' '));
+    }
+  </script>
+</body>
+</html>

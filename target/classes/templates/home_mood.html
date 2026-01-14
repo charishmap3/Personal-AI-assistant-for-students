@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Home - AI Smart Student Assistant</title>
+
+  <link rel="stylesheet" th:href="@{/css/styles.css}" href="/css/styles.css"/>
+  <meta name="_csrf" th:if="${_csrf != null}" th:content="${_csrf.token}"/>
+  <meta name="_csrf_header" th:if="${_csrf != null}" th:content="${_csrf.headerName}"/>
+
+  <style>
+    :root{
+      --accent:#2563eb;
+      --accent-2:#06b6d4;
+      --muted:#6b7280;
+      --text:#0b2e66;
+      --surface:#ffffff;
+      --bg:linear-gradient(180deg,#f0f7ff,#f7fbff);
+    }
+
+    body {
+      margin:0;
+      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    .container {
+      max-width:1050px;
+      margin:18px auto;
+      padding:18px;
+    }
+
+    .hero {
+      background: linear-gradient(180deg,#fff,#fdfcff);
+      padding:34px;
+      border-radius:18px;
+      box-shadow: 0 20px 60px rgba(8,24,64,0.06);
+    }
+
+    .greeting {
+      font-size:34px;
+      font-weight:800;
+      margin:0 0 8px;
+      color:var(--text);
+      letter-spacing:0.2px;
+    }
+
+    .sub {
+      color:var(--muted);
+      margin-bottom:20px;
+      font-size:17px;
+    }
+
+    .cta {
+      display:inline-block;
+      padding:10px 18px;
+      border-radius:999px;
+      background: linear-gradient(90deg,var(--accent),#1258d8);
+      color:white;
+      text-decoration:none;
+      font-weight:700;
+      box-shadow:0 10px 24px rgba(37,99,235,0.18);
+      margin-right:10px;
+      font-size:15px;
+    }
+
+    .explore-btn {
+      display:inline-block;
+      padding:8px 14px;
+      border-radius:12px;
+      background:transparent;
+      color:var(--accent);
+      border:1px solid rgba(37,99,235,0.12);
+      font-weight:700;
+      text-decoration:none;
+      font-size:15px;
+    }
+
+    .about {
+      margin-top:22px;
+      color:var(--muted);
+      line-height:1.6;
+      font-size:15px;
+    }
+
+    /* Hidden features until expanded */
+    #features {
+      opacity:0;
+      max-height:0;
+      overflow:hidden;
+      transition:all .6s cubic-bezier(.2,.9,.3,1);
+    }
+
+    #features.visible {
+      opacity:1;
+      max-height:1800px;
+      padding-top:28px;
+      overflow:visible;
+    }
+
+    .feature-row {
+      display:flex;
+      gap:22px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+
+    .card {
+      width:320px;
+      background:var(--surface);
+      border-radius:12px;
+      padding:20px;
+      box-shadow: 0 18px 40px rgba(8,24,64,0.06);
+    }
+
+    .card h4 {
+      margin:0 0 8px;
+      color:var(--text);
+    }
+
+    .card p {
+      margin:0;
+      color:var(--muted);
+      font-size:14px
+    }
+
+    @media (max-width:900px) {
+      .hero { padding:24px; }
+      .greeting { font-size:28px; }
+      .card { width:100%; }
+    }
+  </style>
+</head>
+
+<body th:attr="data-theme=${session.mood != null ? session.mood : 'neutral'}">
+
+  <div th:replace="fragments/header :: header"></div>
+
+  <div class="container">
+
+    <!-- MAIN CONTENT -->
+    <section class="hero" role="region" aria-label="Welcome area">
+
+      <div style="max-width:680px;margin:auto;text-align:left;">
+
+        <!-- Greeting -->
+        <div class="greeting">
+          Hi, <span th:text="${session.userName != null ? session.userName : 'Student'}">Student</span> 👋
+        </div>
+
+        <div class="sub">
+          Welcome back — here's how this assistant helps you learn smarter.
+        </div>
+
+        <!-- Buttons -->
+       
+        <a class="explore-btn" onclick="showFeatures(event)" href="#features">Explore features</a>
+
+        <!-- ABOUT THE APP -->
+        <div class="about">
+          <h3 style="margin-top:18px;color:var(--text)">About AI Smart Student Assistant</h3>
+          <p>
+            AI Smart Student Assistant converts long lecture notes into bite-sized, study-friendly materials.
+            Upload a PDF or PPT and the app will:
+          </p>
+
+          <ul style="color:var(--muted)">
+            <li>Extract and summarize key topics for quick revision.</li>
+            <li>Generate flashcards for spaced practice and fast recall.</li>
+            <li>Create quizzes so you can self-test and identify weak areas.</li>
+          </ul>
+
+          <p>
+            Everything is fully personalised to the content you upload — helping you study smarter, not harder.
+          </p>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- FEATURE CARDS (hidden until button clicked) -->
+    <section id="features" aria-hidden="true">
+      <div style="max-width:1000px;margin:28px auto;">
+        <div class="feature-row">
+
+          <div class="card">
+            <h4>📄 Summary</h4>
+            <p>Upload PDF/PPT to generate clean, structured summaries.</p>
+            <div style="margin-top:10px">
+              <a class="explore-btn" href="/summary">Open Summary</a>
+            </div>
+          </div>
+
+          <div class="card">
+            <h4>🧠 Flashcards</h4>
+            <p>AI-generated flashcards to help memorize key points fast.</p>
+            <div style="margin-top:10px">
+              <a class="explore-btn" href="/flashcards">Open Flashcards</a>
+            </div>
+          </div>
+
+          <div class="card">
+            <h4>📝 Quiz</h4>
+            <p>Generate quizzes instantly and test yourself with scoring.</p>
+            <div style="margin-top:10px">
+              <a class="explore-btn" href="/quiz/upload">Open Quiz</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Mood modal trigger -->
+  <script th:inline="javascript">
+    var showMoodFromSession = /*[[${session.showMoodPrompt != null}]]*/ false;
+  </script>
+
+  <!-- Main JS -->
+  <script>
+    function showFeatures(e) {
+      if (e) e.preventDefault();
+      const sec = document.getElementById('features');
+      sec.classList.add('visible');
+      sec.setAttribute('aria-hidden','false');
+      sec.scrollIntoView({ behavior:'smooth', block:'start' });
+    }
+
+    function persistMood(mood) {
+      fetch('/user/mood', {
+        method:'POST',
+        headers: {'Content-Type':'application/x-www-form-urlencoded'},
+        body: new URLSearchParams({ mood: mood })
+      });
+    }
+
+    function showMoodModal() {
+      if (document.getElementById('mood-modal-inline')) return;
+
+      const modal = document.createElement('div');
+      modal.id = 'mood-modal-inline';
+      modal.style = `
+        position:fixed;left:0;top:0;right:0;bottom:0;
+        display:flex;align-items:center;justify-content:center;
+        background:rgba(2,6,23,0.44);z-index:9999;`;
+
+      modal.innerHTML = `
+        <div style="background:#fff;padding:18px;border-radius:12px;max-width:520px;width:92%;text-align:center;">
+          <h3 style="margin:0 0 8px;color:#123c82">How was your day?</h3>
+          <p style="color:#6b7280;margin-bottom:14px">Choose your mood, we'll style the theme!</p>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+            <button data-mood="happy" style="padding:10px;border-radius:10px;background:#ffd37a;border:none;">😊 Happy</button>
+            <button data-mood="calm" style="padding:10px;border-radius:10px;background:#a7f3d0;border:none;">😌 Calm</button>
+            <button data-mood="energetic" style="padding:10px;border-radius:10px;background:#ff9fb3;border:none;">⚡ Energetic</button>
+            <button data-mood="sad" style="padding:10px;border-radius:10px;background:#bcd2ff;border:none;">😔 Sad</button>
+            <button data-mood="neutral" style="padding:10px;border-radius:10px;background:#e2e8f0;border:none;">😐 Neutral</button>
+          </div>
+
+          <div style="margin-top:12px">
+            <button id="mood-skip" style="background:transparent;border:none;color:#6b7280;">Skip</button>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(modal);
+
+      modal.querySelectorAll("button[data-mood]").forEach(btn=>{
+        btn.onclick = () => {
+          const mood = btn.getAttribute("data-mood");
+          document.documentElement.setAttribute("data-theme", mood);
+          document.body.setAttribute("data-theme", mood);
+          persistMood(mood);
+          modal.remove();
+        };
+      });
+
+      document.getElementById("mood-skip").onclick = () => {
+        persistMood("neutral");
+        modal.remove();
+      };
+    }
+
+    document.addEventListener("DOMContentLoaded", function(){
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("askMood") === "1" || showMoodFromSession === true) {
+        showMoodModal();
+        params.delete("askMood");
+        history.replaceState(null,"", window.location.pathname + (params.toString() ? "?"+params : ""));
+      }
+    });
+  </script>
+
+</body>
+</html>

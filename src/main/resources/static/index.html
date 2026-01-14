@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload File for Quiz | Student Assistant</title>
+
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 40px 50px;
+            border-radius: 15px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+            text-align: center;
+            width: 420px;
+        }
+        h2 {
+            color: #1f2933;
+            margin-bottom: 25px;
+        }
+        input[type="file"] {
+            margin-top: 15px;
+            padding: 8px;
+        }
+        input[type="number"] {
+            margin-top: 25px;
+            padding: 10px;
+            width: 90px;
+            font-size: 16px;
+            text-align: center;
+        }
+        button {
+            margin-top: 25px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 15px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .status {
+            margin-top: 18px;
+            font-size: 14px;
+            color: #4b5563;
+        }
+        .status.error {
+            color: #b91c1c;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Upload a File for Quiz</h2>
+
+    <form id="quizUploadForm">
+        <input type="file" id="quizFile" accept=".pdf,.pptx,.docx,.txt" required />
+        <br />
+        <input type="number" id="questionCount" min="1" max="30" value="10" />
+        <br />
+        <button type="submit">Generate Quiz</button>
+    </form>
+
+    <div id="status" class="status"></div>
+</div>
+
+<!-- mood/theme script -->
+<script th:src="@{/js/mood-theme.js}" src="/js/mood-theme.js" defer></script>
+
+<script>
+    const form = document.getElementById("quizUploadForm");
+    const fileInput = document.getElementById("quizFile");
+    const countInput = document.getElementById("questionCount");
+    const statusEl = document.getElementById("status");
+
+    form.addEventListener("submit", async function (e) {
+        e.preventDefault();                       // ⛔ stop normal form submit (no reload)
+
+        statusEl.textContent = "";
+        statusEl.classList.remove("error");
+
+        const file = fileInput.files[0];
+        if (!file) {
+            alert("Please choose a file first!");
+            return;
+        }
+
+        const count = parseInt(countInput.value || "5", 10);
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("count", count);
+
+        statusEl.textContent = "⏳ Generating quiz, please wait...";
+
+        try {
+            const res = await fetch("/api/quiz/generate", {
+                method: "POST",
+                body: formData
+            });
+
+            // Read JSON (expected to be a plain array [])
+            const data = await res.json();
+            const quizArray = Array.isArray(data) ? data : [];
+
+            if (!res.ok || quizArray.length === 0) {
+                statusEl.textContent = "⚠ Unable to generate quiz. File may be empty or unsupported.";
+                statusEl.classList.add("error");
+                // still store empty so quiz.html knows there's nothing
+                localStorage.setItem("quizData", JSON.stringify([]));
+                return;
+            }
+
+            // ✅ Store quiz questions & go to quiz page
+            localStorage.setItem("quizData", JSON.stringify(quizArray));
+            window.location.href = "/quiz.html";
+        } catch (err) {
+            console.error("Error while generating quiz:", err);
+            statusEl.textContent = "⚠ Error while generating quiz. Please try again.";
+            statusEl.classList.add("error");
+        }
+    });
+</script>
+</body>
+</html>

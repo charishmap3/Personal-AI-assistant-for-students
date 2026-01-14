@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>File Summarizer | Student Assistant</title>
+
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 40px 50px;
+            border-radius: 15px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 420px;
+        }
+
+        h2 {
+            color: #222;
+            margin-bottom: 25px;
+        }
+
+        input[type="file"] {
+            margin-top: 15px;
+            padding: 8px;
+        }
+
+        button {
+            margin-top: 25px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result-box {
+            margin-top: 25px;
+            background: #f0f4ff;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: left;
+            font-size: 15px;
+            color: #333;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .loading {
+            color: #555;
+            font-size: 15px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>📘 Upload a File for Summary</h2>
+    <form id="uploadForm">
+        <input type="file" id="file" accept=".pdf,.pptx,.docx,.txt" required />
+        <br />
+        <button type="submit">Upload &amp; Summarize</button>
+    </form>
+
+    <div id="output" class="result-box" style="display: none;"></div>
+    <div id="loading" class="loading"></div>
+</div>
+
+<!-- mood/theme script -->
+<script th:src="@{/js/mood-theme.js}" src="/js/mood-theme.js" defer></script>
+
+<script>
+    const form = document.getElementById("uploadForm");
+    const output = document.getElementById("output");
+    const loading = document.getElementById("loading");
+
+    form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const file = document.getElementById("file").files[0];
+        if (!file) {
+            alert("Please choose a file first!");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        loading.innerHTML = "⏳ Extracting and summarizing text... please wait.";
+        output.style.display = "none";
+        output.innerHTML = "";
+
+        try {
+            const response = await fetch("/api/summary/generate", {
+                method: "POST",
+                body: formData
+            });
+
+            if (!response.ok) {
+                // backend error (e.g., unsupported type)
+                throw new Error("Unable to summarize this file. It might be empty or unsupported.");
+            }
+
+            const data = await response.json();
+            loading.innerHTML = "";
+            output.style.display = "block";
+
+            // raw summary string from backend
+            const raw = (data.summary || "").trim();
+
+            // ❗ Treat empty / only "Slide 1:" as failure
+            const looksEmpty =
+                !raw ||
+                /^slide\s*1:?\s*$/i.test(raw);
+
+            if (looksEmpty) {
+                output.innerHTML =
+                    "<p>⚠ Unable to generate a summary. The file may be empty or contain no readable text.</p>";
+            } else {
+                // replace newlines with <br> if needed
+                const htmlSummary = raw.replace(/\n/g, "<br>");
+                output.innerHTML = "<h3>Summary:</h3><p>" + htmlSummary + "</p>";
+            }
+        } catch (error) {
+            loading.innerHTML = "";
+            output.style.display = "block";
+            output.innerHTML = "<p>⚠ Error: " + error.message + "</p>";
+            console.error("Error:", error);
+        }
+    });
+</script>
+</body>
+</html>
