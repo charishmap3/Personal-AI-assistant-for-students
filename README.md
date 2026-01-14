@@ -87,24 +87,19 @@ An external AI module is integrated to generate summaries, flashcards, and MCQs 
 - Maven
 - MySQL
 - IDE (VS Code / IntelliJ / Eclipse)
-
 ## 📸 Output Screenshots
 
 ### 🏠 Home / Dashboard
-![Home Dashboard]https://github.com/charishmap3/Personal-AI-assistant-for-students/blob/main/Images/Screenshot%20(382).png
+![Home](Images/Screenshot%20(382).png)
 
 ### 📄 File Summary Generator
-Upload PDF/PPT files and get AI-generated summaries instantly.
-![Summary Generator](screenshots/summary.png)
+![Summary](Images/Screenshot%20(383).png)
 
 ### 🃏 Flashcard Generator
-Automatically generates question–answer flashcards for quick revision.
-![Flashcards](screenshots/flashcards.png)
+![Flashcards](Images/Screenshot%20(384).png)
 
-### 📝 AI Quiz Generator
-Generate MCQs from uploaded content and test your understanding.
-![Quiz Page](screenshots/quiz.png)
+### 📝 AI Quiz Page
+![Quiz](Images/Screenshot%20(385).png)
 
 ### 📊 Quiz Result
-Instant score evaluation with correct and wrong answers highlighted.
-![Quiz Result](screenshots/quiz-result.png)
+![Quiz Result](Images/Screenshot%20(386).png)
