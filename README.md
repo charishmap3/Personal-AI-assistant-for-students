@@ -91,7 +91,7 @@ An external AI module is integrated to generate summaries, flashcards, and MCQs 
 ## 📸 Output Screenshots
 
 ### 🏠 Home / Dashboard
-![Home Dashboard](screenshots/home.png)
+![Home Dashboard]https://github.com/charishmap3/Personal-AI-assistant-for-students/blob/main/Images/Screenshot%20(382).png
 
 ### 📄 File Summary Generator
 Upload PDF/PPT files and get AI-generated summaries instantly.
